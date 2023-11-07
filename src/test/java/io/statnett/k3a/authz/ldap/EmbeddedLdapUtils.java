@@ -1,6 +1,6 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.ldap.LdapConnectionSpec;
+import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
 import org.zapodot.junit.ldap.EmbeddedLdapRule;
 import org.zapodot.junit.ldap.EmbeddedLdapRuleBuilder;
 

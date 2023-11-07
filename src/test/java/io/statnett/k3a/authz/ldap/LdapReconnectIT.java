@@ -1,7 +1,7 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.ldap.LdapConnectionSpec;
-import no.shhsoft.security.UsernamePasswordAuthenticator;
+import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
+import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

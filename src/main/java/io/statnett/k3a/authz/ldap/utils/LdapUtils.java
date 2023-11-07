@@ -1,6 +1,4 @@
-package no.shhsoft.ldap;
-
-import no.shhsoft.utils.StringUtils;
+package io.statnett.k3a.authz.ldap.utils;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -19,11 +17,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * NOTE: Heavily trimmed version of Sverre's original utility.
- *
- * @author <a href="mailto:shh@thathost.com">Sverre H. Huseby</a>
- */
 public final class LdapUtils {
 
     private static final Logger LOG = Logger.getLogger(LdapUtils.class.getName());

@@ -1,8 +1,5 @@
-package no.shhsoft.ldap;
+package io.statnett.k3a.authz.ldap.utils;
 
-/**
- * @author <a href="mailto:shh@thathost.com">Sverre H. Huseby</a>
- */
 public final class LdapConnectionSpec {
 
     private final String server;

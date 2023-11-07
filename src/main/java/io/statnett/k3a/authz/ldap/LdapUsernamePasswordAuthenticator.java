@@ -1,9 +1,9 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.ldap.LdapConnectionSpec;
-import no.shhsoft.ldap.LdapUtils;
-import no.shhsoft.security.UsernamePasswordAuthenticator;
-import no.shhsoft.utils.StringUtils;
+import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
+import io.statnett.k3a.authz.ldap.utils.LdapUtils;
+import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
+import io.statnett.k3a.authz.ldap.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

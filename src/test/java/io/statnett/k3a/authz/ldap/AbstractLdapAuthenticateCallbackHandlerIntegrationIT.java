@@ -2,8 +2,8 @@ package io.statnett.k3a.authz.ldap;
 
 import no.shhsoft.k3aembedded.K3aEmbedded;
 import no.shhsoft.k3aembedded.K3aTestUtils;
-import no.shhsoft.ldap.LdapConnectionSpec;
-import no.shhsoft.security.UsernamePasswordAuthenticator;
+import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
+import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.AdminClient;

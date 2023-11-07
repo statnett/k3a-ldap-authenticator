@@ -1,6 +1,6 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.security.UsernamePasswordAuthenticator;
+import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.apache.kafka.common.security.plain.PlainAuthenticateCallback;
 import org.junit.Rule;
 import org.junit.Test;

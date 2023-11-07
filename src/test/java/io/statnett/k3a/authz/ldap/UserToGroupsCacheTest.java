@@ -1,6 +1,6 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.time.TestTimeProvider;
+import io.statnett.k3a.authz.ldap.utils.time.TestTimeProvider;
 import org.junit.Assert;
 import org.junit.Test;
 

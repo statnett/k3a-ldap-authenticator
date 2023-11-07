@@ -1,15 +1,12 @@
-package no.shhsoft.utils.cache;
+package io.statnett.k3a.authz.ldap.utils.cache;
 
-import no.shhsoft.time.SystemTimeProvider;
-import no.shhsoft.time.TimeProvider;
+import io.statnett.k3a.authz.ldap.utils.time.SystemTimeProvider;
+import io.statnett.k3a.authz.ldap.utils.time.TimeProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author <a href="mailto:shh@thathost.com">Sverre H. Huseby</a>
- */
 public final class TimeoutCache<K, V>
 implements Clearable {
 

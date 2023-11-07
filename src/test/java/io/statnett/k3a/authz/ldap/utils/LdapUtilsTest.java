@@ -1,13 +1,11 @@
-package no.shhsoft.ldap;
+package io.statnett.k3a.authz.ldap.utils;
 
+import io.statnett.k3a.authz.ldap.utils.LdapUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author <a href="mailto:shh@thathost.com">Sverre H. Huseby</a>
- */
 public final class LdapUtilsTest {
 
     @Test

@@ -1,8 +1,7 @@
-package no.shhsoft.time;
+package io.statnett.k3a.authz.ldap.utils.time;
 
-/**
- * @author <a href="mailto:shh@thathost.com">Sverre H. Huseby</a>
- */
+import io.statnett.k3a.authz.ldap.utils.time.TimeProvider;
+
 public final class TestTimeProvider
 implements TimeProvider {
 

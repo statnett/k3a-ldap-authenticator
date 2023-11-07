@@ -1,8 +1,8 @@
 package io.statnett.k3a.authz.ldap;
 
-import no.shhsoft.time.SystemTimeProvider;
-import no.shhsoft.time.TimeProvider;
-import no.shhsoft.utils.cache.TimeoutCache;
+import io.statnett.k3a.authz.ldap.utils.time.SystemTimeProvider;
+import io.statnett.k3a.authz.ldap.utils.time.TimeProvider;
+import io.statnett.k3a.authz.ldap.utils.cache.TimeoutCache;
 
 import java.util.Set;
 
