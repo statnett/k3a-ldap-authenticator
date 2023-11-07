@@ -1,0 +1,19 @@
+---
+name: Release Please
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  trigger:
+    uses: statnett/github-workflows/.github/workflows/release-please.yaml@main
+    with:
+      release-type: maven
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
