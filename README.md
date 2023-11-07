@@ -1,4 +1,4 @@
-# kafka-ldap-authenticator
+# k3a-ldap-authenticator
 
 This module contains:
 
