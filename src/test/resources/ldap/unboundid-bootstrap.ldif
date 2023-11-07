@@ -1,0 +1,86 @@
+version: 1
+dn: dc=example,dc=com
+dc: example
+objectClass: domain
+objectClass: top
+
+dn: ou=People,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: People
+
+dn: cn=kafka,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: kafka
+uid: kafka
+sn: kafka
+description: Kafka Super User
+userPassword: kafka
+
+dn: cn=producer1,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: producer1
+uid: producer1
+sn: producer1
+description: Producer 1
+userPassword: producer1
+
+dn: cn=producer2,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: producer2
+uid: producer2
+sn: producer2
+description: Producer 2
+userPassword: producer2
+memberOf: cn=producers,ou=Groups,dc=example,dc=com
+
+dn: cn=producer3,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: producer3
+uid: producer3
+sn: producer3
+description: Producer 3
+userPassword: producer3
+memberOf: cn=producers,ou=Groups,dc=example,dc=com
+memberOf: cn=deniedproducers,ou=Groups,dc=example,dc=com
+
+dn: cn=nonproducer,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: nonproducer
+uid: nonproducer
+sn: nonproducer
+description: Test User
+userPassword: nonproducer
+
+dn: ou=Groups,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+dn: cn=producers,ou=Groups,dc=example,dc=com
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: producers
+uniqueMember: cn=producer2,ou=People,dc=example,dc=com
+uniqueMember: cn=producer3,ou=People,dc=example,dc=com
+
+dn: cn=deniedproducers,ou=Groups,dc=example,dc=com
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: producers
+uniqueMember: cn=producer3,ou=People,dc=example,dc=com
