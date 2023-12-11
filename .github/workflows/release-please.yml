@@ -11,8 +11,6 @@ permissions:
 jobs:
   trigger:
     uses: statnett/github-workflows/.github/workflows/release-please.yaml@main
-    with:
-      release-type: maven
     secrets: inherit
     permissions:
       contents: write
