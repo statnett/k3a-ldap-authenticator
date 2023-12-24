@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.2](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.3.1...v3.3.2) (2023-12-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson.core:jackson-databind to v2.16.1 ([#23](https://github.com/statnett/k3a-ldap-authenticator/issues/23)) ([4be43eb](https://github.com/statnett/k3a-ldap-authenticator/commit/4be43eb16844530d0179695e66ad5c5f65f014ba))
+
 ## [3.3.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.3.0...v3.3.1) (2023-12-19)
 
 
