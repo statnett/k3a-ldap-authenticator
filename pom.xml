@@ -67,7 +67,7 @@
         <dependency>
             <groupId>no.shhsoft</groupId>
             <artifactId>k3a-embedded</artifactId>
-            <version>0.5.2+${kafka.version}</version>
+            <version>0.5.3+${kafka.version}</version>
             <scope>test</scope>
         </dependency>
 
