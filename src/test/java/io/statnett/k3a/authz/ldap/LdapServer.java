@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 
 public final class LdapServer {
 
-    private static final String LDAP_DOMAIN = "example.com";
     private static final String LDAP_BASE_DN = "dc=example,dc=com";
     public static final String LDAP_ADMIN_DN = "cn=admin," + LDAP_BASE_DN;
     public static final String LDAP_ADMIN_PASSWORD = "admin";
