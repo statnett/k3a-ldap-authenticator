@@ -1,6 +1,5 @@
 package io.statnett.k3a.authz.ldap.utils;
 
-import io.statnett.k3a.authz.ldap.utils.LdapUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -1,6 +1,5 @@
 package io.statnett.k3a.authz.ldap.utils.cache;
 
-import io.statnett.k3a.authz.ldap.utils.time.SystemTimeProvider;
 import io.statnett.k3a.authz.ldap.utils.time.TimeProvider;
 
 import java.util.HashMap;
@@ -12,10 +11,6 @@ implements Clearable {
 
     private final TimeProvider timeProvider;
     private final Map<K, CacheResult<V>> map = new HashMap<>();
-
-    public TimeoutCache() {
-        timeProvider = SystemTimeProvider.getInstance();
-    }
 
     public TimeoutCache(final TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
@@ -29,10 +24,6 @@ implements Clearable {
         private CacheResult(final long whenTimeoutMs, final V value) {
             this.whenTimeoutMs = whenTimeoutMs;
             this.value = value;
-        }
-
-        public long getWhenTimeoutMs() {
-            return whenTimeoutMs;
         }
 
         public V getValue() {

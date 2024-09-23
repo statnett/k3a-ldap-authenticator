@@ -38,7 +38,8 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
 
     private static final String TOPIC_WITH_USER_ALLOW = "topic_with_user_principal";
     private static final String TOPIC_WITH_GROUP_ALLOW = "topic_with_group_principal";
-    public static final String JAAS_ADMIN_USER_LINE = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"kafka\" password=\"kafka\" user_kafka=\"kafka\";";
+    private static final String JAAS_ADMIN_USER_LINE = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"kafka\" password=\"kafka\" user_kafka=\"kafka\";";
+    private static final String ANY_HOST = "*";
     private static LdapServer ldapServer;
     private static K3aEmbedded kafka;
 
@@ -169,33 +170,37 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
         producer.flush();
     }
 
-    public void addTopic(final String topicName) {
+    private void addTopic(final String topicName) {
         final NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
         try (final Admin admin = getSuperAdmin()) {
             admin.createTopics(Collections.singleton(newTopic));
         }
     }
 
-    public void addProducer(final String topicName, final String principal) {
+    private void addProducer(final String topicName, final String principal) {
         addProducer(topicName, principal, AclPermissionType.ALLOW);
     }
 
-    public void addDeniedProducer(final String topicName, final String principal) {
+    private void addDeniedProducer(final String topicName, final String principal) {
         addProducer(topicName, principal, AclPermissionType.DENY);
     }
 
     private void addProducer(final String topicName, final String principal, final AclPermissionType permissionType) {
-        final AclBinding describeAclBinding = createBinding(topicName, principal, AclOperation.DESCRIBE, permissionType);
-        final AclBinding writeAclBinding = createBinding(topicName, principal, AclOperation.WRITE, permissionType);
+        final AclBinding describeAclBinding = createLiteralBinding(topicName, principal, AclOperation.DESCRIBE, permissionType);
+        final AclBinding writeAclBinding = createLiteralBinding(topicName, principal, AclOperation.WRITE, permissionType);
         final Collection<AclBinding> aclBindings = Arrays.asList(describeAclBinding, writeAclBinding);
         try (final Admin admin = getSuperAdmin()) {
             admin.createAcls(aclBindings);
         }
     }
 
-    private AclBinding createBinding(final String topicName, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
-        final ResourcePattern resourcePattern = new ResourcePattern(ResourceType.TOPIC, topicName, PatternType.LITERAL);
-        final AccessControlEntry accessControlEntry = new AccessControlEntry(principal, "*", operation, permissionType);
+    private AclBinding createLiteralBinding(final String topicName, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
+        return createBinding(topicName, PatternType.LITERAL, principal, operation, permissionType);
+    }
+
+    private AclBinding createBinding(final String topicName, final PatternType patternType, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
+        final ResourcePattern resourcePattern = new ResourcePattern(ResourceType.TOPIC, topicName, patternType);
+        final AccessControlEntry accessControlEntry = new AccessControlEntry(principal, ANY_HOST, operation, permissionType);
         return new AclBinding(resourcePattern, accessControlEntry);
     }
 
@@ -210,21 +215,21 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
         return s;
     }
 
-    public Admin getSuperAdmin() {
+    private Admin getSuperAdmin() {
         return getAdmin("kafka", "kafka");
     }
 
-    public Admin getAdmin(final String username, final String password) {
+    private Admin getAdmin(final String username, final String password) {
         return AdminClient.create(getSaslConfig(username, password));
     }
 
-    public Producer<Integer, String> getProducer(final String username, final String password) {
+    private Producer<Integer, String> getProducer(final String username, final String password) {
         final Map<String, Object> config = K3aTestUtils.producerProps(kafka);
         config.putAll(getSaslConfig(username, password));
         return new KafkaProducer<>(config);
     }
 
-    public Map<String, Object> getSaslConfig(final String username, final String password) {
+    private Map<String, Object> getSaslConfig(final String username, final String password) {
         final Map<String, Object> map = new HashMap<>();
         map.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServersForAdditionalPort(0));
         map.put("security.protocol", "SASL_PLAINTEXT");
