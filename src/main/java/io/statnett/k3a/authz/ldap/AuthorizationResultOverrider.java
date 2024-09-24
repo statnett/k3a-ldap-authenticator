@@ -62,7 +62,7 @@ final class AuthorizationResultOverrider {
             final AuthorizationResult alternativeResult = authorize(authorizer, groupsForUser, action);
             if (alternativeResult != originalResult && (alternativeResult == AuthorizationResult.ALLOWED || alternativeResult == AuthorizationResult.DENIED)) {
                 results.set(q, alternativeResult);
-                LOG.info("*** Overriding " + originalResult + ", changing to " + alternativeResult + " due to matching group rule for \"" + principal + "\"");
+                LOG.info("*** Overriding " + originalResult + ", changing to " + alternativeResult + " due to matching group rule for \"" + principal + "\" on \"" + action.resourcePattern().name() + "\"");
             }
         }
     }
