@@ -67,6 +67,17 @@ sn: nonproducer
 description: Test User
 userPassword: nonproducer
 
+dn: cn=consumer1,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: consumer1
+uid: consumer1
+sn: consumer1
+description: Consumer 1
+userPassword: consumer1
+
 dn: ou=Groups,dc=example,dc=com
 objectClass: organizationalUnit
 objectClass: top
@@ -84,3 +95,9 @@ objectClass: groupOfUniqueNames
 objectClass: top
 cn: producers
 uniqueMember: cn=producer3,ou=People,dc=example,dc=com
+
+dn: cn=consumers,ou=Groups,dc=example,dc=com
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: producers
+uniqueMember: cn=consumer1,ou=People,dc=example,dc=com

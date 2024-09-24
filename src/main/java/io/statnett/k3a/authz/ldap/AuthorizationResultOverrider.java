@@ -4,6 +4,8 @@ import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.apache.kafka.common.acl.AclPermissionType;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.apache.kafka.common.security.auth.KafkaPrincipal;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
@@ -66,7 +68,8 @@ final class AuthorizationResultOverrider {
     }
 
     private static AuthorizationResult authorize(final Authorizer authorizer, final Set<String> groups, final Action action) {
-        final ResourcePatternFilter resourcePatternFilter = action.resourcePattern().toFilter();
+        final ResourcePattern resourcePattern = action.resourcePattern();
+        final ResourcePatternFilter resourcePatternFilter = new ResourcePatternFilter(resourcePattern.resourceType(), resourcePattern.name(), PatternType.MATCH);
         final AccessControlEntryFilter accessControlEntryFilter = new AccessControlEntryFilter(null, null, action.operation(), AclPermissionType.ANY);
         final AclBindingFilter aclBindingFilter = new AclBindingFilter(resourcePatternFilter, accessControlEntryFilter);
         final Iterable<AclBinding> acls = authorizer.acls(aclBindingFilter);
