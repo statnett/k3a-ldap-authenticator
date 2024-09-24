@@ -38,6 +38,10 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
 
     private static final String TOPIC_WITH_USER_ALLOW = "topic_with_user_principal";
     private static final String TOPIC_WITH_GROUP_ALLOW = "topic_with_group_principal";
+    private static final String TOPIC_PREFIX_WITH_USER_ALLOW = "topic_with_user_principal";
+    private static final String TOPIC_PREFIX_WITH_GROUP_ALLOW = "topic_with_group_principal";
+    private static final String PREFIXED_TOPIC_WITH_USER_ALLOW = TOPIC_PREFIX_WITH_USER_ALLOW + "-topic";
+    private static final String PREFIXED_TOPIC_WITH_GROUP_ALLOW = TOPIC_PREFIX_WITH_GROUP_ALLOW + "-topic";
     private static final String JAAS_ADMIN_USER_LINE = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"kafka\" password=\"kafka\" user_kafka=\"kafka\";";
     private static final String ANY_HOST = "*";
     private static LdapServer ldapServer;
@@ -100,6 +104,11 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
         addTopic(TOPIC_WITH_GROUP_ALLOW);
         addProducer(TOPIC_WITH_GROUP_ALLOW, "Group:" + LdapServer.PRODUCERS_GROUP);
         addDeniedProducer(TOPIC_WITH_GROUP_ALLOW, "Group:" + LdapServer.DENIED_PRODUCERS_GROUP);
+        addTopic(PREFIXED_TOPIC_WITH_USER_ALLOW);
+        addProducerForPrefixedTopic(TOPIC_PREFIX_WITH_USER_ALLOW, "User:" + LdapServer.PRODUCER_WITH_USER_ALLOW_USER_PASS);
+        addTopic(PREFIXED_TOPIC_WITH_GROUP_ALLOW);
+        addProducerForPrefixedTopic(TOPIC_PREFIX_WITH_GROUP_ALLOW, "Group:" + LdapServer.PRODUCERS_GROUP);
+        addDeniedProducer(PREFIXED_TOPIC_WITH_GROUP_ALLOW, "Group:" + LdapServer.DENIED_PRODUCERS_GROUP);
     }
 
     private void assertLdapAuthenticationWorks() {
@@ -127,6 +136,13 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
     }
 
     @Test
+    public final void shouldProduceOnPrefixedTopicWhenProducerByUser() {
+        try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_USER_ALLOW_USER_PASS)) {
+            produce(producer, PREFIXED_TOPIC_WITH_USER_ALLOW, "foo");
+        }
+    }
+
+    @Test
     public final void shouldNotProduceWhenNotProducerByGroup() {
         Assertions.assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.NON_PRODUCER_USER_PASS)) {
@@ -148,6 +164,31 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
     public final void shouldProduceWhenProducerByGroup() {
         try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS)) {
             produce(producer, TOPIC_WITH_GROUP_ALLOW, "foo");
+        }
+    }
+
+    @Test
+    public final void shouldNotProduceOnPrefixedTopicWhenNotProducerByGroup() {
+        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+            try (final Producer<Integer, String> producer = getProducer(LdapServer.NON_PRODUCER_USER_PASS)) {
+                produce(producer, PREFIXED_TOPIC_WITH_GROUP_ALLOW, "foo");
+            }
+        });
+    }
+
+    @Test
+    public final void shouldNotProduceOnPrefixedTopicWhenInADeniedGroupEvenIfInAllowedGroup() {
+        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+            try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_GROUP_DENY_USER_PASS)) {
+                produce(producer, PREFIXED_TOPIC_WITH_GROUP_ALLOW, "foo");
+            }
+        });
+    }
+
+    @Test
+    public final void shouldProduceOnPrefixedTopicWhenProducerByGroup() {
+        try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS)) {
+            produce(producer, PREFIXED_TOPIC_WITH_GROUP_ALLOW, "foo");
         }
     }
 
@@ -194,8 +235,21 @@ public abstract class AbstractLdapAuthenticateCallbackHandlerIntegrationIT {
         }
     }
 
+    private void addProducerForPrefixedTopic(final String topicPrefix, final String principal) {
+        final AclBinding describeAclBinding = createPrefixedBinding(topicPrefix, principal, AclOperation.DESCRIBE, AclPermissionType.ALLOW);
+        final AclBinding writeAclBinding = createPrefixedBinding(topicPrefix, principal, AclOperation.WRITE, AclPermissionType.ALLOW);
+        final Collection<AclBinding> aclBindings = Arrays.asList(describeAclBinding, writeAclBinding);
+        try (final Admin admin = getSuperAdmin()) {
+            admin.createAcls(aclBindings);
+        }
+    }
+
     private AclBinding createLiteralBinding(final String topicName, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
         return createBinding(topicName, PatternType.LITERAL, principal, operation, permissionType);
+    }
+
+    private AclBinding createPrefixedBinding(final String topicPrefix, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
+        return createBinding(topicPrefix, PatternType.PREFIXED, principal, operation, permissionType);
     }
 
     private AclBinding createBinding(final String topicName, final PatternType patternType, final String principal, final AclOperation operation, final AclPermissionType permissionType) {
