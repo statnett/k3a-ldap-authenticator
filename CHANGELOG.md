@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.4.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.3.3...v3.4.0) (2024-09-24)
+
+
+### Features
+
+* add support for prefixed resources for Group principals ([#73](https://github.com/statnett/k3a-ldap-authenticator/issues/73)) ([689916c](https://github.com/statnett/k3a-ldap-authenticator/commit/689916c1ce46bb56f45d8a8fb85ae1ce9e4c6c38))
+
+
+### Bug Fixes
+
+* log resource when doing group-based override ([#74](https://github.com/statnett/k3a-ldap-authenticator/issues/74)) ([88e7458](https://github.com/statnett/k3a-ldap-authenticator/commit/88e7458de9f61188dfb9b1174840afe4291dde2c))
+
 ## [3.3.3](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.3.2...v3.3.3) (2024-08-14)
 
 
