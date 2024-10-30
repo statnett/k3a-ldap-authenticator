@@ -4,7 +4,7 @@
 
     <groupId>io.statnett.k3a</groupId>
     <artifactId>k3a-ldap-authenticator</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.4.2</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>

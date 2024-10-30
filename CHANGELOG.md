@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.2](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.4.1...v3.4.2) (2024-10-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.18.1 ([#86](https://github.com/statnett/k3a-ldap-authenticator/issues/86)) ([61fdc4d](https://github.com/statnett/k3a-ldap-authenticator/commit/61fdc4d9b6cc9d745f722042a4462ff6f24f5540))
+* update kafka-clients to v3.8.1 ([#89](https://github.com/statnett/k3a-ldap-authenticator/issues/89)) ([be7717d](https://github.com/statnett/k3a-ldap-authenticator/commit/be7717dbb6a023f7f08f57be337a7d4bcc74893e))
+
 ## [3.4.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.4.0...v3.4.1) (2024-10-21)
 
 
