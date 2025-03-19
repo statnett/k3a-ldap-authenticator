@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.4.3...v4.0.0) (2025-03-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to Kafka 4, removing support for ZooKeeper ACLs ([#110](https://github.com/statnett/k3a-ldap-authenticator/issues/110))
+
+### Features
+
+* upgrade to Kafka 4, removing support for ZooKeeper ACLs ([#110](https://github.com/statnett/k3a-ldap-authenticator/issues/110)) ([befe1c7](https://github.com/statnett/k3a-ldap-authenticator/commit/befe1c7676cec6c0914b1ddf76c5c69a6151320e))
+
 ## [3.4.3](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.4.2...v3.4.3) (2025-03-14)
 
 
