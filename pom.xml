@@ -25,11 +25,11 @@
     </scm>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kafka.version>3.9.0</kafka.version>
-        <k3a.embedded.version>0.5.8+${kafka.version}</k3a.embedded.version>
+        <kafka.version>4.0.0</kafka.version>
+        <k3a.embedded.version>0.5.10+${kafka.version}</k3a.embedded.version>
         <kafka.scala.version>2.13</kafka.scala.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
     </properties>

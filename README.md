@@ -1,23 +1,21 @@
 # k3a-ldap-authenticator
 
+**NOTE!** As of version 4.0.0 this module no longer supports ZooKeeper-based ACLs: 
+KRaft mode required.
+
 This module contains:
 
 * A [Kafka
   `AuthenticateCallbackHandler`](src/main/java/io/statnett/k3a/authz/ldap/LdapAuthenticateCallbackHandler.java)
   that uses a directory (LDAP/Active Directory) to verify a username
   and a plain-text password.
-* A [Kafka
-  `AclAuthorizer`](src/main/java/io/statnett/k3a/authz/ldap/LdapGroupAclAuthorizer.java)
-  and
-  [StandardAuthorizer](src/main/java/io/statnett/k3a/authz/ldap/LdapGroupStandardAuthorizer.java)
-  that know about principals of type `Group`, and check them against
-  LDAP/Active Directory group membership. The first is for
-  installations that use ZooKeeper ACLs, the second for installations
-  running without ZooKeepers.
+* A [Kafka StandardAuthorizer](src/main/java/io/statnett/k3a/authz/ldap/LdapGroupStandardAuthorizer.java)
+  that knows about principals of type `Group`, and check them against
+  LDAP/Active Directory group membership.
 
 If you do not care about group membership, you only need to set up the
 first class. For group membership you need both, since the
-`AclAuthorizer`/`StandardAuthorizer` builds on data fetched by the
+`StandardAuthorizer` builds on data fetched by the
 `AuthenticateCallbackHandler`.
 
 ## Misc. notes
@@ -94,8 +92,7 @@ without matching a full DN.
 ### Group authorizer configuration
 
 If you want to enable ACLs which contain a `Group` principal type, you
-will need the above configuration, plus our `LdapGroupAclAuthorizer`
-(for ZooKeeper ACLs) or `LdapGroupStandardAuthorizer` for KRaft mode
+will need the above configuration, plus our `LdapGroupStandardAuthorizer` for KRaft mode
 ACLs.
 
 Requirements for our group authorizer:
@@ -111,12 +108,6 @@ Requirements for our group authorizer:
   LDAP tree to find itself. This is not the case everywhere.
 
 Tell Kafka to use this authorizer like this:
-
-```properties
-authorizer.class.name=io.statnett.k3a.authz.ldap.LdapGroupAclAuthorizer
-```
-
-or this:
 
 ```properties
 authorizer.class.name=io.statnett.k3a.authz.ldap.LdapGroupStandardAuthorizer
