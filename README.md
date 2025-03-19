@@ -10,7 +10,7 @@ This module contains:
   that uses a directory (LDAP/Active Directory) to verify a username
   and a plain-text password.
 * A [Kafka StandardAuthorizer](src/main/java/io/statnett/k3a/authz/ldap/LdapGroupStandardAuthorizer.java)
-  that know about principals of type `Group`, and check them against
+  that knows about principals of type `Group`, and check them against
   LDAP/Active Directory group membership.
 
 If you do not care about group membership, you only need to set up the
