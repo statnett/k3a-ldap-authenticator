@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.0...v4.0.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.junit:junit-bom to v5.12.2 ([#114](https://github.com/statnett/k3a-ldap-authenticator/issues/114)) ([a8fe4ad](https://github.com/statnett/k3a-ldap-authenticator/commit/a8fe4adf79484830de87caee80c7fe5aded3a810))
+
 ## [4.0.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v3.4.3...v4.0.0) (2025-03-19)
 
 
