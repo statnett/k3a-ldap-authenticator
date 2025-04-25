@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.1...v4.0.2) (2025-04-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.19.0 ([#118](https://github.com/statnett/k3a-ldap-authenticator/issues/118)) ([21ee6b0](https://github.com/statnett/k3a-ldap-authenticator/commit/21ee6b02ef843325d61028aa8f87764b6139259c))
+
 ## [4.0.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.0...v4.0.1) (2025-04-22)
 
 
