@@ -1,68 +1,74 @@
 package io.statnett.k3a.authz.ldap;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.zapodot.junit.ldap.EmbeddedLdapRule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public final class LdapUsernamePasswordAuthenticatorIntegrationTest {
 
-    @ClassRule
-    public static final EmbeddedLdapRule LDAP_RULE = EmbeddedLdapUtils.createEmbeddedLdapRule();
+    private static LdapServer ldapServer;
+
+    @BeforeAll
+    public static void beforeAll() {
+        ldapServer = new LdapServer("/ldap/zapodot-bootstrap.ldif");
+        ldapServer.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        ldapServer.stop();
+    }
 
     @Test
     public void shouldAcceptValidUserDnAndPassword() {
         final LdapUsernamePasswordAuthenticator authenticator = getAuthenticator();
-        assertTrue(authenticator.authenticateByDn(EmbeddedLdapUtils.LDAP_ADMIN_DN, EmbeddedLdapUtils.LDAP_ADMIN_PASSWORD));
-        assertTrue(authenticator.authenticateByDn(EmbeddedLdapUtils.EXISTING_RDN + "," + EmbeddedLdapUtils.LDAP_BASE_DN, EmbeddedLdapUtils.EXISTING_USER_PASSWORD));
+        Assertions.assertTrue(authenticator.authenticateByDn(LdapServer.LDAP_ADMIN_DN, LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()));
+        Assertions.assertTrue(authenticator.authenticateByDn(LdapServer.EXISTING_RDN + "," + LdapServer.LDAP_BASE_DN, LdapServer.EXISTING_USER_PASSWORD));
     }
 
     @Test
     public void shouldAcceptValidUsernameAndPassword() {
         final LdapUsernamePasswordAuthenticator authenticator = getAuthenticator();
-        assertTrue(authenticator.authenticate(EmbeddedLdapUtils.EXISTING_USERNAME, EmbeddedLdapUtils.EXISTING_USER_PASSWORD));
+        Assertions.assertTrue(authenticator.authenticate(LdapServer.EXISTING_USERNAME, LdapServer.EXISTING_USER_PASSWORD));
     }
 
     @Test
     public void shouldPopulateGroups() {
         final LdapUsernamePasswordAuthenticator authenticator = getAuthenticator();
-        assertTrue(authenticator.authenticate(EmbeddedLdapUtils.EXISTING_USERNAME, EmbeddedLdapUtils.EXISTING_USER_PASSWORD));
-        final Set<String> groups = UserToGroupsCache.getInstance().getGroupsForUser(EmbeddedLdapUtils.EXISTING_USERNAME);
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
+        Assertions.assertTrue(authenticator.authenticate(LdapServer.EXISTING_USERNAME, LdapServer.EXISTING_USER_PASSWORD));
+        final Set<String> groups = UserToGroupsCache.getInstance().getGroupsForUser(LdapServer.EXISTING_USERNAME);
+        Assertions.assertNotNull(groups);
+        Assertions.assertEquals(1, groups.size());
     }
 
     @Test
     public void shouldPopulateGroupsUsingServiceAccount() {
         final LdapUsernamePasswordAuthenticator authenticator = getAuthenticatorWithServiceUser();
-        assertTrue(authenticator.authenticate(EmbeddedLdapUtils.EXISTING_USERNAME, EmbeddedLdapUtils.EXISTING_USER_PASSWORD));
-        final Set<String> groups = UserToGroupsCache.getInstance().getGroupsForUser(EmbeddedLdapUtils.EXISTING_USERNAME);
-        assertNotNull(groups);
-        assertEquals(1, groups.size());
+        Assertions.assertTrue(authenticator.authenticate(LdapServer.EXISTING_USERNAME, LdapServer.EXISTING_USER_PASSWORD));
+        final Set<String> groups = UserToGroupsCache.getInstance().getGroupsForUser(LdapServer.EXISTING_USERNAME);
+        Assertions.assertNotNull(groups);
+        Assertions.assertEquals(1, groups.size());
     }
     @Test
     public void shouldDenyEmptyUserDnOrPassword() {
         final LdapUsernamePasswordAuthenticator authenticator = getAuthenticator();
-        assertFalse(authenticator.authenticateByDn(EmbeddedLdapUtils.LDAP_ADMIN_DN, null));
-        assertFalse(authenticator.authenticateByDn(EmbeddedLdapUtils.LDAP_ADMIN_DN, "".toCharArray()));
-        assertFalse(authenticator.authenticateByDn(null, EmbeddedLdapUtils.LDAP_ADMIN_PASSWORD));
-        assertFalse(authenticator.authenticateByDn("", EmbeddedLdapUtils.LDAP_ADMIN_PASSWORD));
-        assertFalse(authenticator.authenticateByDn(null, null));
-        assertFalse(authenticator.authenticateByDn("", "".toCharArray()));
+        Assertions.assertFalse(authenticator.authenticateByDn(LdapServer.LDAP_ADMIN_DN, null));
+        Assertions.assertFalse(authenticator.authenticateByDn(LdapServer.LDAP_ADMIN_DN, "".toCharArray()));
+        Assertions.assertFalse(authenticator.authenticateByDn(null, LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()));
+        Assertions.assertFalse(authenticator.authenticateByDn("", LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()));
+        Assertions.assertFalse(authenticator.authenticateByDn(null, null));
+        Assertions.assertFalse(authenticator.authenticateByDn("", "".toCharArray()));
     }
 
     private LdapUsernamePasswordAuthenticator getAuthenticator() {
-        return new LdapUsernamePasswordAuthenticator(EmbeddedLdapUtils.getLdapConnectionSpec(LDAP_RULE), EmbeddedLdapUtils.USERNAME_TO_DN_FORMAT, EmbeddedLdapUtils.USERNAME_TO_UNIQUE_SEARCH_FORMAT, null, null);
+        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, null, null);
     }
 
     private LdapUsernamePasswordAuthenticator getAuthenticatorWithServiceUser() {
-        return new LdapUsernamePasswordAuthenticator(EmbeddedLdapUtils.getLdapConnectionSpec(LDAP_RULE), EmbeddedLdapUtils.USERNAME_TO_DN_FORMAT, EmbeddedLdapUtils.USERNAME_TO_UNIQUE_SEARCH_FORMAT, EmbeddedLdapUtils.LDAP_ADMIN_DN, new String(EmbeddedLdapUtils.LDAP_ADMIN_PASSWORD));
+        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, LdapServer.LDAP_ADMIN_DN, new String(LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()));
     }
 
 }

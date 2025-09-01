@@ -49,7 +49,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     @BeforeAll
     public void beforeClass() {
-        ldapServer = new LdapServer();
+        ldapServer = new LdapServer("/ldap/unboundid-bootstrap.ldif");
         ldapServer.start();
 
         final Map<String, Object> map = new HashMap<>();

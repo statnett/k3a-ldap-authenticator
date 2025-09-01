@@ -1,8 +1,8 @@
 package io.statnett.k3a.authz.ldap;
 
 import io.statnett.k3a.authz.ldap.utils.time.TestTimeProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +24,7 @@ public final class UserToGroupsCacheTest {
     public void shouldReturnFetched() {
         final UserToGroupsCache cache = new UserToGroupsCache(timeProvider);
         cache.fetchGroupsForUserIfNeeded("foo", s -> groupSet1);
-        Assert.assertEquals(groupSet1, cache.getGroupsForUser("foo"));
+        Assertions.assertEquals(groupSet1, cache.getGroupsForUser("foo"));
     }
 
     @Test
@@ -32,7 +32,7 @@ public final class UserToGroupsCacheTest {
         final UserToGroupsCache cache = new UserToGroupsCache(timeProvider);
         cache.setGroupsForUser("foo", groupSet1);
         timeProvider.add(UserToGroupsCache.TTL);
-        Assert.assertNull(cache.getGroupsForUser("foo"));
+        Assertions.assertNull(cache.getGroupsForUser("foo"));
     }
 
     @Test
@@ -40,7 +40,7 @@ public final class UserToGroupsCacheTest {
         final UserToGroupsCache cache = new UserToGroupsCache(timeProvider);
         cache.setGroupsForUser("foo", groupSet1);
         cache.fetchGroupsForUserIfNeeded("foo", s -> groupSet2);
-        Assert.assertEquals(groupSet1, cache.getGroupsForUser("foo"));
+        Assertions.assertEquals(groupSet1, cache.getGroupsForUser("foo"));
     }
 
     @Test
@@ -49,7 +49,7 @@ public final class UserToGroupsCacheTest {
         cache.setGroupsForUser("foo", groupSet1);
         timeProvider.add(UserToGroupsCache.TTL - UserToGroupsCache.REFRESH_WHEN_LESS_THAN_MS + 1);
         cache.fetchGroupsForUserIfNeeded("foo", s -> groupSet2);
-        Assert.assertEquals(groupSet2, cache.getGroupsForUser("foo"));
+        Assertions.assertEquals(groupSet2, cache.getGroupsForUser("foo"));
     }
 
 }

@@ -9,7 +9,7 @@ public final class LdapReconnectIT {
 
     @Test
     public void shouldReconnectAfterConnectionLoss() {
-        final LdapServer ldap = new LdapServer();
+        final LdapServer ldap = new LdapServer("/ldap/unboundid-bootstrap.ldif");
         ldap.start();
         final UserToGroupsCache groupsCache = UserToGroupsCache.getInstance();
         groupsCache.clear();

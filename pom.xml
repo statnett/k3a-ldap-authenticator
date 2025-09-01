@@ -32,18 +32,11 @@
         <k3a.embedded.version>0.5.10+${kafka.version}</k3a.embedded.version>
         <kafka.scala.version>2.13</kafka.scala.version>
         <maven-surefire.version>3.5.3</maven-surefire.version>
+        <junit.version>5.13.4</junit.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>5.13.4</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- Must manage Jackson dependencies to avoid conflicts with Scala -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -100,21 +93,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.zapodot</groupId>
-            <artifactId>embedded-ldap-junit</artifactId>
-            <version>0.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
