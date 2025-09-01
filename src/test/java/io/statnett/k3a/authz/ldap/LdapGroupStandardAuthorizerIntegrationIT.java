@@ -20,7 +20,6 @@ import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public final class LdapGroupStandardAuthorizerIntegrationIT {
@@ -111,13 +113,13 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
         final LdapConnectionSpec spec = new LdapConnectionSpec(ldapServer.getLdapHost(), ldapServer.getLdapPort(), false, ldapServer.getLdapBaseDn());
         final UsernamePasswordAuthenticator authenticator = new LdapUsernamePasswordAuthenticator(spec, LdapServer.USERNAME_TO_DN_FORMAT, null, null, null);
         for (final String userPass : Arrays.asList("kafka", LdapServer.PRODUCER_WITH_USER_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_DENY_USER_PASS, LdapServer.NON_PRODUCER_USER_PASS)) {
-            Assertions.assertTrue(authenticator.authenticate(userPass, userPass.toCharArray()), "Failed for " + userPass);
+            assertTrue(authenticator.authenticate(userPass, userPass.toCharArray()), "Failed for " + userPass);
         }
     }
 
     @Test
     public void shouldNotProduceWhenNotProducerByUser() {
-        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+        assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.NON_PRODUCER_USER_PASS)) {
                 produce(producer, TOPIC_WITH_USER_ALLOW, "foo");
             }
@@ -140,7 +142,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     @Test
     public void shouldNotProduceWhenNotProducerByGroup() {
-        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+        assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.NON_PRODUCER_USER_PASS)) {
                 produce(producer, TOPIC_WITH_GROUP_ALLOW, "foo");
             }
@@ -149,7 +151,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     @Test
     public void shouldNotProduceWhenInADeniedGroupEvenIfInAllowedGroup() {
-        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+        assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_GROUP_DENY_USER_PASS)) {
                 produce(producer, TOPIC_WITH_GROUP_ALLOW, "foo");
             }
@@ -165,7 +167,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     @Test
     public void shouldNotProduceOnPrefixedTopicWhenNotProducerByGroup() {
-        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+        assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.NON_PRODUCER_USER_PASS)) {
                 produce(producer, PREFIXED_TOPIC_WITH_GROUP_ALLOW, "foo");
             }
@@ -174,7 +176,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     @Test
     public void shouldNotProduceOnPrefixedTopicWhenInADeniedGroupEvenIfInAllowedGroup() {
-        Assertions.assertThrows(TopicAuthorizationException.class, () -> {
+        assertThrows(TopicAuthorizationException.class, () -> {
             try (final Producer<Integer, String> producer = getProducer(LdapServer.PRODUCER_WITH_GROUP_DENY_USER_PASS)) {
                 produce(producer, PREFIXED_TOPIC_WITH_GROUP_ALLOW, "foo");
             }

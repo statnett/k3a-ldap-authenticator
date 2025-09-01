@@ -2,8 +2,10 @@ package io.statnett.k3a.authz.ldap;
 
 import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
 import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class LdapReconnectIT {
 
@@ -19,12 +21,12 @@ public final class LdapReconnectIT {
         final int numReconnects = groupsCache.getNumReconnects();
         groupsCache.makeUseless();
         callAuthenticator(authenticator);
-        Assertions.assertEquals(groupsCache.getNumReconnects(), numReconnects + 1, "Expected reconnect, but got none.");
+        assertEquals(groupsCache.getNumReconnects(), numReconnects + 1, "Expected reconnect, but got none.");
     }
 
     private void callAuthenticator(final UsernamePasswordAuthenticator authenticator) {
-        Assertions.assertTrue(authenticator.authenticate(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS.toCharArray()));
-        Assertions.assertEquals(1, UserToGroupsCache.getInstance().getGroupsForUser(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS).size());
+        assertTrue(authenticator.authenticate(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS.toCharArray()));
+        assertEquals(1, UserToGroupsCache.getInstance().getGroupsForUser(LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS).size());
     }
 
 }

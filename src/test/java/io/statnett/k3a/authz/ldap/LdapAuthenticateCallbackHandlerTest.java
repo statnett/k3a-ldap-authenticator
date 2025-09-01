@@ -2,7 +2,6 @@ package io.statnett.k3a.authz.ldap;
 
 import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.apache.kafka.common.security.plain.PlainAuthenticateCallback;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.callback.Callback;
@@ -14,6 +13,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class LdapAuthenticateCallbackHandlerTest {
 
@@ -38,8 +43,8 @@ public final class LdapAuthenticateCallbackHandlerTest {
 
     @Test
     public void shouldNotAcceptWrongSaslMechanism() {
-        final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(getWorkingConfigs(), "wrong"));
-        Assertions.assertTrue(exception.getMessage().contains("SASL mechanism \"PLAIN\""));
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(getWorkingConfigs(), "wrong"));
+        assertTrue(exception.getMessage().contains("SASL mechanism \"PLAIN\""));
     }
 
     @Test
@@ -59,8 +64,8 @@ public final class LdapAuthenticateCallbackHandlerTest {
                 }
                 nonWorkingConfigs.put(entry.getKey(), entry.getValue());
             }
-            final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(nonWorkingConfigs));
-            Assertions.assertTrue(exception.getMessage().contains(expectedErrorSubstring));
+            final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(nonWorkingConfigs));
+            assertTrue(exception.getMessage().contains(expectedErrorSubstring));
         }
     }
 
@@ -68,23 +73,23 @@ public final class LdapAuthenticateCallbackHandlerTest {
     public void shouldNotAcceptInvalidPortNumber() {
         final Map<String, Object> configs = getWorkingConfigs();
         configs.put("authz.ldap.port", "foo");
-        final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(configs));
-        Assertions.assertTrue(exception.getMessage().contains("must be numeric"));
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(configs));
+        assertTrue(exception.getMessage().contains("must be numeric"));
     }
 
     @Test
     public void shouldNotAcceptMissingUsernameCallback() {
         final LdapAuthenticateCallbackHandler callbackHandler = kafkaCreateCallbackHandler();
-        final IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getPasswordCallback(KNOWN_PASSWORD)}));
-        Assertions.assertTrue(exception.getMessage().contains("NameCallback"));
+        final IllegalStateException exception = assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getPasswordCallback(KNOWN_PASSWORD)}));
+        assertTrue(exception.getMessage().contains("NameCallback"));
         kafkaDestroyCallbackHandler(callbackHandler);
     }
 
     @Test
     public void shouldNotAcceptMissingPasswordCallback() {
         final LdapAuthenticateCallbackHandler callbackHandler = kafkaCreateCallbackHandler();
-        final IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getUsernameCallback(KNOWN_USERNAME)}));
-        Assertions.assertTrue(exception.getMessage().contains("PlainAuthenticationCallback"));
+        final IllegalStateException exception = assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getUsernameCallback(KNOWN_USERNAME)}));
+        assertTrue(exception.getMessage().contains("PlainAuthenticationCallback"));
         kafkaDestroyCallbackHandler(callbackHandler);
     }
 
@@ -93,9 +98,9 @@ public final class LdapAuthenticateCallbackHandlerTest {
         final LdapAuthenticateCallbackHandler callbackHandler = kafkaCreateCallbackHandler();
         try {
             callbackHandler.handle(new Callback[] { new TextInputCallback("foo") });
-            Assertions.fail("Did not get expected exception.");
+            fail("Did not get expected exception.");
         } catch (final UnsupportedCallbackException e) {
-            Assertions.assertInstanceOf(TextInputCallback.class, e.getCallback(), "Did not get expected exception.");
+            assertInstanceOf(TextInputCallback.class, e.getCallback(), "Did not get expected exception.");
         }
         kafkaDestroyCallbackHandler(callbackHandler);
     }
@@ -106,11 +111,11 @@ public final class LdapAuthenticateCallbackHandlerTest {
         try {
             final PlainAuthenticateCallback passwordCallback1 = getPasswordCallback(KNOWN_PASSWORD);
             callbackHandler.handle(new Callback[] { getUsernameCallback(KNOWN_USERNAME), passwordCallback1 });
-            Assertions.assertTrue(passwordCallback1.authenticated());
+            assertTrue(passwordCallback1.authenticated());
 
             final PlainAuthenticateCallback passwordCallback2 = getPasswordCallback(KNOWN_PASSWORD);
             callbackHandler.handle(new Callback[] { passwordCallback2, getUsernameCallback(KNOWN_USERNAME) });
-            Assertions.assertTrue(passwordCallback2.authenticated());
+            assertTrue(passwordCallback2.authenticated());
         } catch (final UnsupportedCallbackException e) {
             throw new RuntimeException("Got unexpected exception.", e);
         }
@@ -123,7 +128,7 @@ public final class LdapAuthenticateCallbackHandlerTest {
         try {
             final PlainAuthenticateCallback passwordCallback = getPasswordCallback(KNOWN_PASSWORD);
             callbackHandler.handle(new Callback[] { getUsernameCallback("wrong"), passwordCallback });
-            Assertions.assertFalse(passwordCallback.authenticated());
+            assertFalse(passwordCallback.authenticated());
         } catch (final UnsupportedCallbackException e) {
             throw new RuntimeException("Got unexpected exception.", e);
         }
@@ -136,7 +141,7 @@ public final class LdapAuthenticateCallbackHandlerTest {
         try {
             final PlainAuthenticateCallback passwordCallback = getPasswordCallback("wrong".toCharArray());
             callbackHandler.handle(new Callback[] { getUsernameCallback(KNOWN_USERNAME), passwordCallback });
-            Assertions.assertFalse(passwordCallback.authenticated());
+            assertFalse(passwordCallback.authenticated());
         } catch (final UnsupportedCallbackException e) {
             throw new RuntimeException("Got unexpected exception.", e);
         }
