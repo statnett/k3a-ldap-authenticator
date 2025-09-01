@@ -2,9 +2,7 @@ package io.statnett.k3a.authz.ldap;
 
 import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.apache.kafka.common.security.plain.PlainAuthenticateCallback;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -16,18 +14,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class LdapAuthenticateCallbackHandlerTest {
 
     private static final String KNOWN_USERNAME = "user";
     private static final char[] KNOWN_PASSWORD = "password".toCharArray();
     private static final UsernamePasswordAuthenticator KNOWN_USERNAME_PASSWORD_AUTHENTICATOR = new AcceptOneUsernamePasswordAuthenticator();
-
-    @Rule
-    public final ExpectedException exceptionRule = ExpectedException.none();
 
     private static final class AcceptOneUsernamePasswordAuthenticator
     implements UsernamePasswordAuthenticator {
@@ -46,9 +43,8 @@ public final class LdapAuthenticateCallbackHandlerTest {
 
     @Test
     public void shouldNotAcceptWrongSaslMechanism() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("SASL mechanism \"PLAIN\"");
-        kafkaCreateCallbackHandler(getWorkingConfigs(), "wrong");
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(getWorkingConfigs(), "wrong"));
+        assertTrue(exception.getMessage().contains("SASL mechanism \"PLAIN\""));
     }
 
     @Test
@@ -68,9 +64,8 @@ public final class LdapAuthenticateCallbackHandlerTest {
                 }
                 nonWorkingConfigs.put(entry.getKey(), entry.getValue());
             }
-            exceptionRule.expect(IllegalArgumentException.class);
-            exceptionRule.expectMessage(expectedErrorSubstring);
-            kafkaCreateCallbackHandler(nonWorkingConfigs);
+            final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(nonWorkingConfigs));
+            assertTrue(exception.getMessage().contains(expectedErrorSubstring));
         }
     }
 
@@ -78,34 +73,23 @@ public final class LdapAuthenticateCallbackHandlerTest {
     public void shouldNotAcceptInvalidPortNumber() {
         final Map<String, Object> configs = getWorkingConfigs();
         configs.put("authz.ldap.port", "foo");
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("must be numeric");
-        kafkaCreateCallbackHandler(configs);
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> kafkaCreateCallbackHandler(configs));
+        assertTrue(exception.getMessage().contains("must be numeric"));
     }
 
     @Test
     public void shouldNotAcceptMissingUsernameCallback() {
         final LdapAuthenticateCallbackHandler callbackHandler = kafkaCreateCallbackHandler();
-        try {
-            exceptionRule.expect(IllegalStateException.class);
-            exceptionRule.expectMessage("NameCallback");
-            callbackHandler.handle(new Callback[] { getPasswordCallback(KNOWN_PASSWORD) });
-        } catch (final UnsupportedCallbackException e) {
-            throw new RuntimeException("Got unexpected exception.", e);
-        }
+        final IllegalStateException exception = assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getPasswordCallback(KNOWN_PASSWORD)}));
+        assertTrue(exception.getMessage().contains("NameCallback"));
         kafkaDestroyCallbackHandler(callbackHandler);
     }
 
     @Test
     public void shouldNotAcceptMissingPasswordCallback() {
         final LdapAuthenticateCallbackHandler callbackHandler = kafkaCreateCallbackHandler();
-        try {
-            exceptionRule.expect(IllegalStateException.class);
-            exceptionRule.expectMessage("PlainAuthenticationCallback");
-            callbackHandler.handle(new Callback[] { getUsernameCallback(KNOWN_USERNAME) });
-        } catch (final UnsupportedCallbackException e) {
-            throw new RuntimeException("Got unexpected exception.", e);
-        }
+        final IllegalStateException exception = assertThrows(IllegalStateException.class, () -> callbackHandler.handle(new Callback[]{getUsernameCallback(KNOWN_USERNAME)}));
+        assertTrue(exception.getMessage().contains("PlainAuthenticationCallback"));
         kafkaDestroyCallbackHandler(callbackHandler);
     }
 
@@ -116,7 +100,7 @@ public final class LdapAuthenticateCallbackHandlerTest {
             callbackHandler.handle(new Callback[] { new TextInputCallback("foo") });
             fail("Did not get expected exception.");
         } catch (final UnsupportedCallbackException e) {
-            assertTrue("Did not get expected exception.", e.getCallback() instanceof TextInputCallback);
+            assertInstanceOf(TextInputCallback.class, e.getCallback(), "Did not get expected exception.");
         }
         kafkaDestroyCallbackHandler(callbackHandler);
     }
