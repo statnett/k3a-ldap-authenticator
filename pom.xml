@@ -31,7 +31,7 @@
         <kafka.version>4.1.0</kafka.version>
         <k3a.embedded.version>0.6.0+${kafka.version}</k3a.embedded.version>
         <kafka.scala.version>2.13</kafka.scala.version>
-        <maven-surefire.version>3.5.3</maven-surefire.version>
+        <maven-surefire.version>3.5.4</maven-surefire.version>
         <junit.version>5.13.4</junit.version>
     </properties>
 
