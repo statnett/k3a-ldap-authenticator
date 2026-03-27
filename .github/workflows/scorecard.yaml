@@ -12,7 +12,7 @@ permissions:
   contents: read
 jobs:
   trigger:
-    uses: statnett/github-workflows/.github/workflows/scorecard.yaml@main
+    uses: statnett/github-workflows/.github/workflows/scorecard.yaml@041e38de5cf534e88a865c4d9ebdaf71e2ce19ea # main
     permissions:
       security-events: write
       id-token: write
