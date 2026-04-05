@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   trigger:
-    uses: statnett/github-workflows/.github/workflows/release-please.yaml@041e38de5cf534e88a865c4d9ebdaf71e2ce19ea # main
+    uses: statnett/github-workflows/.github/workflows/release-please.yaml@9c4cba31f9b6489c923c93126572d58e30b9829d # main
     secrets: inherit
     permissions:
       contents: write
