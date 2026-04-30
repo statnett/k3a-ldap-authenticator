@@ -1,4 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>statnett/renovate-config"],
+  "extends": [
+    "github>statnett/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchPackageNames": [
+        "!java"
+      ],
+      "extends": [
+        ":semanticCommitTypeAll(chore)"
+      ]
+    }
+  ]
 }
