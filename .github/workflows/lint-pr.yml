@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   trigger:
-    uses: statnett/github-workflows/.github/workflows/lint-pr.yaml@d39041bacf87216f3bd95a3ff20d31b29cfaef67 # main
+    uses: statnett/github-workflows/.github/workflows/lint-pr.yaml@d73574cafc9f815a9c5a0d876d9fa9590c72c5f9 # main
     permissions:
       pull-requests: write
       statuses: write
