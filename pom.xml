@@ -32,7 +32,7 @@
         <k3a.embedded.version>0.10.0+${kafka.version}</k3a.embedded.version>
         <kafka.scala.version>2.13</kafka.scala.version>
         <maven-surefire.version>3.5.6</maven-surefire.version>
-        <junit.version>6.1.0</junit.version>
+        <junit.version>6.1.1</junit.version>
     </properties>
 
     <dependencyManagement>
