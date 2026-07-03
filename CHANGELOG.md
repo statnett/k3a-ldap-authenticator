@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.3...v4.1.0) (2026-07-03)
+
+
+### Features
+
+* make LDAP timeout configurable ([#201](https://github.com/statnett/k3a-ldap-authenticator/issues/201)) ([49d5633](https://github.com/statnett/k3a-ldap-authenticator/commit/49d56339099f387ceadba7dfbdad7a444aedffc8))
+
 ## [4.0.3](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.2...v4.0.3) (2026-04-30)
 
 
