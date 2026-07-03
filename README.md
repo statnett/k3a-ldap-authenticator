@@ -74,7 +74,10 @@ authz.ldap.host=openldap
 authz.ldap.port=389
 authz.ldap.base.dn=dc=example,dc=com
 authz.ldap.username.to.dn.format=cn=%s,ou=People,dc=example,dc=com
+authz.ldap.timeout.ms=5000
 ```
+
+`authz.ldap.timeout.ms` is optional and defaults to 5000 (5 seconds).
 
 LDAPS (TLS) is assumed if the port is 636. For all other ports,
 plain-text LDAP is assumed. If using LDAPS with a self-signed
