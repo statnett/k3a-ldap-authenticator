@@ -74,8 +74,9 @@ public final class LdapUtils {
         /* As per https://docs.oracle.com/javase/jndi/tutorial/ldap/connect/pool.html,
          * not using connection pooling, since we change the principal of the connection. */
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put("com.sun.jndi.ldap.read.timeout", "5000");
-        env.put("com.sun.jndi.ldap.connect.timeout", "5000");
+        final String timeoutMsString = String.valueOf(ldapConnectionSpec.getTimeoutMs());
+        env.put("com.sun.jndi.ldap.read.timeout", timeoutMsString);
+        env.put("com.sun.jndi.ldap.connect.timeout", timeoutMsString);
         env.put(Context.PROVIDER_URL, ldapConnectionSpec.getUrl());
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, userDn);

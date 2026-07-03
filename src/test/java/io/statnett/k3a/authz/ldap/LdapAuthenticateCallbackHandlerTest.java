@@ -1,5 +1,6 @@
 package io.statnett.k3a.authz.ldap;
 
+import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
 import io.statnett.k3a.authz.ldap.utils.UsernamePasswordAuthenticator;
 import org.apache.kafka.common.security.plain.PlainAuthenticateCallback;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -146,6 +148,21 @@ public final class LdapAuthenticateCallbackHandlerTest {
             throw new RuntimeException("Got unexpected exception.", e);
         }
         kafkaDestroyCallbackHandler(callbackHandler);
+    }
+
+    @Test
+    public void shouldHaveDefaultTimeoutWhenNotGiven() {
+        final Map<String, Object> configs = getWorkingConfigs();
+        final LdapConnectionSpec connectionSpec = LdapAuthenticateCallbackHandler.toLdapConnectionSpec(configs);
+        assertEquals(LdapConnectionSpec.DEFAULT_TIMEOUT_MS, connectionSpec.getTimeoutMs());
+    }
+
+    @Test
+    public void shouldOverrideDefaultTimeoutWhenGiven() {
+        final Map<String, Object> configs = getWorkingConfigs();
+        configs.put("authz.ldap.timeout.ms", 6000);
+        final LdapConnectionSpec connectionSpec = LdapAuthenticateCallbackHandler.toLdapConnectionSpec(configs);
+        assertEquals(6000, connectionSpec.getTimeoutMs());
     }
 
     private Callback getUsernameCallback(final String username) {
