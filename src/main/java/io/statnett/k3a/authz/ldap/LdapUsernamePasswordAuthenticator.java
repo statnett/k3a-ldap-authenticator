@@ -76,7 +76,7 @@ implements UsernamePasswordAuthenticator {
             if (!s.equals(username)) {
                 LOG.warn("Expected \"" + username + "\", but got \"" + s + "\"");
             }
-            return LdapUtils.findGroups(context, username, GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat);
+            return LdapUtils.findGroupsWithRetries(context, username, GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat);
         });
     }
 

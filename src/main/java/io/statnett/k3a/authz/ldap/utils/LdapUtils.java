@@ -121,40 +121,51 @@ public final class LdapUtils {
     }
 
     public static Set<String> findGroups(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
-        try {
-            return findGroupsWithoutErrorHandling(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat);
-        } catch (final NamingException e) {
-            LOG.log(Level.WARNING, "Exception while fetching groups for \"" + username + "\". Will return no groups.", e);
-            return Collections.emptySet();
-        }
+        return findGroupsWithRetries(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat, 0);
     }
 
-    public static Set<String> findGroupsWithoutErrorHandling(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat)
-    throws NamingException {
-        final Set<String> set = new HashSet<>();
+    public static Set<String> findGroupsWithRetries(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
+        return findGroupsWithRetries(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat, DEFAULT_NUM_RETRIES);
+    }
+
+    public static Set<String> findGroupsWithRetries(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat, final int numRetries) {
         final SearchControls sc = new SearchControls();
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         sc.setReturningAttributes(new String[] { groupMemberOfField });
         final String filter = "(" + String.format(usernameToUniqueSearchFormat, LdapUtils.escape(username)) + ")";
-        final NamingEnumeration<SearchResult> ne = ldap.search("", filter, sc);
-        if (ne.hasMore()) {
-            final SearchResult sr = ne.next();
-            final Attributes attributes = sr.getAttributes();
-            if (attributes != null) {
-                final Attribute attribute = attributes.get(groupMemberOfField);
-                if (attribute != null) {
-                    final NamingEnumeration<?> allGroups = attribute.getAll();
-                    while (allGroups.hasMore()) {
-                        set.add(allGroups.next().toString());
+        NamingException lastNamingException = null;
+        for (int t = 0; t <= numRetries; t++) {
+            try {
+                final NamingEnumeration<SearchResult> ne = ldap.search("", filter, sc);
+                final Set<String> set = new HashSet<>();
+                if (ne.hasMore()) {
+                    final SearchResult sr = ne.next();
+                    final Attributes attributes = sr.getAttributes();
+                    if (attributes != null) {
+                        final Attribute attribute = attributes.get(groupMemberOfField);
+                        if (attribute != null) {
+                            final NamingEnumeration<?> allGroups = attribute.getAll();
+                            while (allGroups.hasMore()) {
+                                set.add(allGroups.next().toString());
+                            }
+                        }
                     }
                 }
+                if (ne.hasMore()) {
+                    LOG.warning("Expected to find unique entry for \"" + filter + "\", but found several. Will not return any groups.");
+                    set.clear();
+                }
+                return set;
+            } catch (final NamingException e) {
+                lastNamingException = e;
+                if (!isRetryable(e)) {
+                    break;
+                }
+                LOG.log(Level.FINE, "Exception while fetching groups for \"" + username + "\", attempt " + (t + 1) + " of " + (numRetries + 1), e);
             }
         }
-        if (ne.hasMore()) {
-            LOG.warning("Expected to find unique entry for \"" + filter + "\", but found several. Will not return any groups.");
-            set.clear();
-        }
-        return set;
+        LOG.log(Level.WARNING, "Exception while fetching groups for \"" + username + "\". Will return no groups.", lastNamingException);
+        return Collections.emptySet();
     }
 
 }

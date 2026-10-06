@@ -67,11 +67,10 @@ implements UserToGroupsFetcher {
                 return Collections.emptySet();
             }
             try {
-                return LdapUtils.findGroupsWithoutErrorHandling(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat);
-            } catch (final NamingException e) {
-                LOG.info("Got NamingException. Retrying. " + e.getMessage());
+                return LdapUtils.findGroupsWithRetries(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat);
+            } catch (final Exception e) {
                 discardContext();
-                return LdapUtils.findGroups(getContext(), username, groupMemberOfField, usernameToUniqueSearchFormat);
+                throw new RuntimeException(e);
             }
         }
     }
