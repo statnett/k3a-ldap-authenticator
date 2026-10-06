@@ -56,7 +56,7 @@ implements UsernamePasswordAuthenticator {
     }
 
     private boolean authenticateByDn(final String userDn, final char[] password, final String originalUsername) {
-        final LdapContext context = LdapUtils.connect(ldapConnectionSpec, userDn, password);
+        final LdapContext context = LdapUtils.connectWithRetries(ldapConnectionSpec, userDn, password);
         if (context == null) {
             return false;
         }

@@ -34,7 +34,7 @@ implements UserToGroupsFetcher {
     LdapContext getContext() {
         synchronized (contextLock) {
             if (context == null) {
-                context = LdapUtils.connect(connectionSpec, userDn, password);
+                context = LdapUtils.connectWithRetries(connectionSpec, userDn, password);
                 ++numReconnects;
             }
             return context;
