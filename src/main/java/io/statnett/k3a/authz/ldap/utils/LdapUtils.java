@@ -1,9 +1,11 @@
 package io.statnett.k3a.authz.ldap.utils;
 
 import javax.naming.AuthenticationException;
+import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.ServiceUnavailableException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
@@ -21,6 +23,7 @@ public final class LdapUtils {
 
     private static final Logger LOG = Logger.getLogger(LdapUtils.class.getName());
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+    private static final int DEFAULT_NUM_RETRIES = 2; // Retries for communication errors. Initial attempt not included.
 
     private LdapUtils() {
     }
@@ -67,6 +70,14 @@ public final class LdapUtils {
     }
 
     public static LdapContext connect(final LdapConnectionSpec ldapConnectionSpec, final String userDn, final char[] password) {
+        return connectWithRetries(ldapConnectionSpec, userDn, password, 0);
+    }
+
+    public static LdapContext connectWithRetries(final LdapConnectionSpec ldapConnectionSpec, final String userDn, final char[] password) {
+        return connectWithRetries(ldapConnectionSpec, userDn, password, DEFAULT_NUM_RETRIES);
+    }
+
+    public static LdapContext connectWithRetries(final LdapConnectionSpec ldapConnectionSpec, final String userDn, final char[] password, final int numRetries) {
         if (StringUtils.isBlank(userDn) || password == null || password.length == 0) {
             return null;
         }
@@ -82,15 +93,31 @@ public final class LdapUtils {
         env.put(Context.SECURITY_PRINCIPAL, userDn);
         env.put(Context.SECURITY_CREDENTIALS, password);
         env.put(Context.REFERRAL, "follow");
-        try {
-            return new InitialLdapContext(env, null);
-        } catch (final AuthenticationException e) {
-            LOG.info("Authentication failure for user \"" + userDn + "\": " + e.getMessage());
-            return null;
-        } catch (final NamingException e) {
-            LOG.log(Level.WARNING, "Got unexpected exception when connecting to " + ldapConnectionSpec.getUrl() + " as \"" + userDn + "\"", e);
-            throw new UncheckedNamingException(e);
+        NamingException lastNamingException = null;
+        for (int t = 0; t <= numRetries; t++) {
+            try {
+                return new InitialLdapContext(env, null);
+            } catch (final AuthenticationException e) {
+                LOG.info("Authentication failure for user \"" + userDn + "\": " + e.getMessage());
+                return null;
+            } catch (final NamingException e) {
+                lastNamingException = e;
+                if (!isRetryable(e)) {
+                    break;
+                }
+                LOG.log(Level.FINE, "Network exception " + whenConnectingTo(ldapConnectionSpec, userDn) + ", attempt " + (t + 1) + " of " + (numRetries + 1), e);
+            }
         }
+        LOG.log(Level.WARNING, "Got exception " + whenConnectingTo(ldapConnectionSpec, userDn), lastNamingException);
+        throw new UncheckedNamingException(lastNamingException);
+    }
+
+    private static String whenConnectingTo(final LdapConnectionSpec spec, final String dn) {
+        return "when connecting to " + spec.getUrl() + " as \"" + dn + "\"";
+    }
+
+    private static boolean isRetryable(final NamingException e) {
+        return e instanceof CommunicationException || e instanceof ServiceUnavailableException;
     }
 
     public static Set<String> findGroups(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
