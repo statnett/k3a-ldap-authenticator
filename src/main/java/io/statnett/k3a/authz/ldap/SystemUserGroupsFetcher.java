@@ -41,6 +41,19 @@ implements UserToGroupsFetcher {
         }
     }
 
+    void discardContext() {
+        synchronized (contextLock) {
+            if (context != null) {
+                try {
+                    context.close();
+                } catch (final NamingException e) {
+                    LOG.debug("Got error when closing context", e);
+                }
+                context = null;
+            }
+        }
+    }
+
     public int getNumReconnects() {
         return numReconnects;
     }
@@ -57,25 +70,8 @@ implements UserToGroupsFetcher {
                 return LdapUtils.findGroupsWithoutErrorHandling(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat);
             } catch (final NamingException e) {
                 LOG.info("Got NamingException. Retrying. " + e.getMessage());
-                try {
-                    ldapContext.close();
-                } catch (final Exception e2) {
-                    LOG.debug("Ignoring exception when closing LdapContext");
-                }
-                context = null;
+                discardContext();
                 return LdapUtils.findGroups(getContext(), username, groupMemberOfField, usernameToUniqueSearchFormat);
-            }
-        }
-    }
-
-    void makeUseless() {
-        synchronized (contextLock) {
-            if (context != null) {
-                try {
-                    context.close();
-                } catch (final NamingException e) {
-                    LOG.debug("Got error when closing context", e);
-                }
             }
         }
     }
