@@ -60,7 +60,7 @@ final class UserToGroupsCache {
     /** For testing */
     public void makeUseless() {
         if (userToGroupsFetcher != null && userToGroupsFetcher instanceof SystemUserGroupsFetcher) {
-            ((SystemUserGroupsFetcher) userToGroupsFetcher).makeUseless();
+            ((SystemUserGroupsFetcher) userToGroupsFetcher).discardContext();
         }
         clear();
     }
