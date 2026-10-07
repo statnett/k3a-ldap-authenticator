@@ -111,7 +111,7 @@ public final class LdapGroupStandardAuthorizerIntegrationIT {
 
     private void assertLdapAuthenticationWorks() {
         final LdapConnectionSpec spec = new LdapConnectionSpec(ldapServer.getLdapHost(), ldapServer.getLdapPort(), false, ldapServer.getLdapBaseDn());
-        final UsernamePasswordAuthenticator authenticator = new LdapUsernamePasswordAuthenticator(spec, LdapServer.USERNAME_TO_DN_FORMAT, null, null, null);
+        final UsernamePasswordAuthenticator authenticator = new LdapUsernamePasswordAuthenticator(spec, LdapServer.USERNAME_TO_DN_FORMAT, null, null, null, 0);
         for (final String userPass : Arrays.asList("kafka", LdapServer.PRODUCER_WITH_USER_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_ALLOW_USER_PASS, LdapServer.PRODUCER_WITH_GROUP_DENY_USER_PASS, LdapServer.NON_PRODUCER_USER_PASS)) {
             assertTrue(authenticator.authenticate(userPass, userPass.toCharArray()), "Failed for " + userPass);
         }

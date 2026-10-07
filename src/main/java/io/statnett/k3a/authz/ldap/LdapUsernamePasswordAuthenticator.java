@@ -21,14 +21,15 @@ implements UsernamePasswordAuthenticator {
     private final String usernameToDnFormat;
     private final String usernameToUniqueSearchFormat;
     private final boolean useUserContextForFetchingGroups;
+    private final int numRetries;
 
-    public LdapUsernamePasswordAuthenticator(final LdapConnectionSpec ldapConnectionSpec, final String usernameToDnFormat, final String usernameToUniqueSearchFormat, final String userDn, final String userPassword) {
+    public LdapUsernamePasswordAuthenticator(final LdapConnectionSpec ldapConnectionSpec, final String usernameToDnFormat, final String usernameToUniqueSearchFormat, final String userDn, final String userPassword, final int numRetries) {
         this.ldapConnectionSpec = Objects.requireNonNull(ldapConnectionSpec);
         this.usernameToDnFormat = Objects.requireNonNull(usernameToDnFormat);
         this.usernameToUniqueSearchFormat = usernameToUniqueSearchFormat;
         if (!StringUtils.isBlank(userDn) && !StringUtils.isBlank(userPassword)) {
             LOG.info("Will use LDAP service user \"" + userDn + "\" to look up groups.");
-            final SystemUserGroupsFetcher userToGroupsFetcher = new SystemUserGroupsFetcher(ldapConnectionSpec, userDn, userPassword.toCharArray(), GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat);
+            final SystemUserGroupsFetcher userToGroupsFetcher = new SystemUserGroupsFetcher(ldapConnectionSpec, userDn, userPassword.toCharArray(), GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat, numRetries);
             UserToGroupsCache.getInstance().setUserToGroupsFetcher(userToGroupsFetcher);
             useUserContextForFetchingGroups = false;
             /* Connect to LDAP to get errors early. */
@@ -40,6 +41,7 @@ implements UsernamePasswordAuthenticator {
             LOG.info("No LDAP service user provided. Will use the authenticated user to look up groups.");
             useUserContextForFetchingGroups = true;
         }
+        this.numRetries = numRetries;
     }
 
     @Override
@@ -56,7 +58,7 @@ implements UsernamePasswordAuthenticator {
     }
 
     private boolean authenticateByDn(final String userDn, final char[] password, final String originalUsername) {
-        final LdapContext context = LdapUtils.connectWithRetries(ldapConnectionSpec, userDn, password);
+        final LdapContext context = LdapUtils.connectWithRetries(ldapConnectionSpec, userDn, password, numRetries);
         if (context == null) {
             return false;
         }
@@ -76,7 +78,7 @@ implements UsernamePasswordAuthenticator {
             if (!s.equals(username)) {
                 LOG.warn("Expected \"" + username + "\", but got \"" + s + "\"");
             }
-            return LdapUtils.findGroupsWithRetries(context, username, GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat);
+            return LdapUtils.findGroupsWithRetries(context, username, GROUP_MEMBER_OF_FIELD, usernameToUniqueSearchFormat, numRetries);
         });
     }
 

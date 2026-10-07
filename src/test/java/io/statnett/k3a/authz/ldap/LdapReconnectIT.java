@@ -16,7 +16,7 @@ public final class LdapReconnectIT {
         final UserToGroupsCache groupsCache = UserToGroupsCache.getInstance();
         groupsCache.clear();
         final LdapConnectionSpec spec = new LdapConnectionSpec(ldap.getLdapHost(), ldap.getLdapPort(), false, ldap.getLdapBaseDn());
-        final UsernamePasswordAuthenticator authenticator = new LdapUsernamePasswordAuthenticator(spec, LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, LdapServer.LDAP_ADMIN_DN, LdapServer.LDAP_ADMIN_PASSWORD);
+        final UsernamePasswordAuthenticator authenticator = new LdapUsernamePasswordAuthenticator(spec, LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, LdapServer.LDAP_ADMIN_DN, LdapServer.LDAP_ADMIN_PASSWORD, 0);
         callAuthenticator(authenticator);
         final int numReconnects = groupsCache.getNumReconnects();
         groupsCache.makeUseless();

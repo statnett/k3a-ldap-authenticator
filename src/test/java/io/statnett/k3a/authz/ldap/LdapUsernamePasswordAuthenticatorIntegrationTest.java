@@ -68,11 +68,11 @@ public final class LdapUsernamePasswordAuthenticatorIntegrationTest {
     }
 
     private LdapUsernamePasswordAuthenticator getAuthenticator() {
-        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, null, null);
+        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, null, null, 0);
     }
 
     private LdapUsernamePasswordAuthenticator getAuthenticatorWithServiceUser() {
-        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, LdapServer.LDAP_ADMIN_DN, new String(LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()));
+        return new LdapUsernamePasswordAuthenticator(ldapServer.getLdapConnectionSpec(), LdapServer.USERNAME_TO_DN_FORMAT, LdapServer.USERNAME_TO_UNIQUE_SEARCH_FORMAT, LdapServer.LDAP_ADMIN_DN, new String(LdapServer.LDAP_ADMIN_PASSWORD.toCharArray()), 0);
     }
 
 }
