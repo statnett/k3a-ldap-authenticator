@@ -29,7 +29,7 @@ implements AuthenticateCallbackHandler {
     private static final String CONFIG_LDAP_USERNAME_TO_DN_FORMAT = "authz.ldap.username.to.dn.format";
     private static final String CONFIG_LDAP_USERNAME_TO_UNIQUE_SEARCH_FORMAT = "authz.ldap.username.to.unique.search.format";
     private static final String SASL_PLAIN = "PLAIN";
-    private static final int DEFAULT_NUM_RETRIES = 0;
+    private static final int DEFAULT_NUM_RETRIES = 1;
     private UsernamePasswordAuthenticator authenticator;
     private final UsernamePasswordAuthenticatorFactory usernamePasswordAuthenticatorFactory;
 
