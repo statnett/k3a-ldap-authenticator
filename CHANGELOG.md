@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.1.0...v4.2.0) (2026-10-08)
+
+
+### Features
+
+* make number of retries configurable ([#232](https://github.com/statnett/k3a-ldap-authenticator/issues/232)) ([2e34c11](https://github.com/statnett/k3a-ldap-authenticator/commit/2e34c112673480e245e4a58ed5ad1a4cfd5ae879))
+* retry connections on network failure ([#229](https://github.com/statnett/k3a-ldap-authenticator/issues/229)) ([0560297](https://github.com/statnett/k3a-ldap-authenticator/commit/0560297cbac85dd3b1ea58e7d9002abdb90216bd))
+
 ## [4.1.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.0.3...v4.1.0) (2026-07-03)
 
 
