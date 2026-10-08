@@ -75,13 +75,13 @@ authz.ldap.port=389
 authz.ldap.base.dn=dc=example,dc=com
 authz.ldap.username.to.dn.format=cn=%s,ou=People,dc=example,dc=com
 authz.ldap.timeout.ms=5000
-authz.ldap.retries=0
+authz.ldap.retries=1
 ```
 
 `authz.ldap.timeout.ms` is optional and defaults to 5000 (5 seconds).
 
 `authz.ldap.retries` is also optional, and denotes the number of times
-to retry after network errors. The default is 0, meaning do not retry
+to retry after network errors. The default is 1, meaning retry once
 after a failed connection or search attempt.
 
 LDAPS (TLS) is assumed if the port is 636. For all other ports,
