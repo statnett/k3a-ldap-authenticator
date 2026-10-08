@@ -182,7 +182,7 @@ public final class LdapAuthenticateCallbackHandlerTest {
     }
 
     private LdapAuthenticateCallbackHandler kafkaCreateCallbackHandler(final Map<String, Object> configs, final String saslMechanism) {
-        final LdapAuthenticateCallbackHandler callbackHandler = new LdapAuthenticateCallbackHandler((spec, usernameToDnFormat, usernameToUniqueSearchFormat, userDn, userPassword) -> LdapAuthenticateCallbackHandlerTest.KNOWN_USERNAME_PASSWORD_AUTHENTICATOR);
+        final LdapAuthenticateCallbackHandler callbackHandler = new LdapAuthenticateCallbackHandler((spec, usernameToDnFormat, usernameToUniqueSearchFormat, userDn, userPassword, numRetries) -> LdapAuthenticateCallbackHandlerTest.KNOWN_USERNAME_PASSWORD_AUTHENTICATOR);
         callbackHandler.close();
         callbackHandler.configure(configs, saslMechanism, Collections.emptyList());
         return callbackHandler;

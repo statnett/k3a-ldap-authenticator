@@ -75,16 +75,21 @@ authz.ldap.port=389
 authz.ldap.base.dn=dc=example,dc=com
 authz.ldap.username.to.dn.format=cn=%s,ou=People,dc=example,dc=com
 authz.ldap.timeout.ms=5000
+authz.ldap.retries=0
 ```
 
 `authz.ldap.timeout.ms` is optional and defaults to 5000 (5 seconds).
+
+`authz.ldap.retries` is also optional, and denotes the number of times
+to retry after network errors. The default is 0, meaning do not retry
+after a failed connection or search attempt.
 
 LDAPS (TLS) is assumed if the port is 636. For all other ports,
 plain-text LDAP is assumed. If using LDAPS with a self-signed
 certificate, the Broker JVM must be told to trust your
 certificates. How to do that is beyond the scope of this README.
 
-The final parameter, `ldap.username.to.dn.format`, specifies how the
+The `ldap.username.to.dn.format` parameter specifies how the
 incoming username should be transformed to match whatever the
 directory expects as part of a bind operation. The `%s` combination
 will be replaced by a properly escaped version of what the user
@@ -95,8 +100,8 @@ without matching a full DN.
 ### Group authorizer configuration
 
 If you want to enable ACLs which contain a `Group` principal type, you
-will need the above configuration, plus our `LdapGroupStandardAuthorizer` for KRaft mode
-ACLs.
+will need the above configuration, plus our
+`LdapGroupStandardAuthorizer` for KRaft mode ACLs.
 
 Requirements for our group authorizer:
 

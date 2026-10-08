@@ -23,7 +23,6 @@ public final class LdapUtils {
 
     private static final Logger LOG = Logger.getLogger(LdapUtils.class.getName());
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
-    private static final int DEFAULT_NUM_RETRIES = 2; // Retries for communication errors. Initial attempt not included.
 
     private LdapUtils() {
     }
@@ -73,10 +72,6 @@ public final class LdapUtils {
         return connectWithRetries(ldapConnectionSpec, userDn, password, 0);
     }
 
-    public static LdapContext connectWithRetries(final LdapConnectionSpec ldapConnectionSpec, final String userDn, final char[] password) {
-        return connectWithRetries(ldapConnectionSpec, userDn, password, DEFAULT_NUM_RETRIES);
-    }
-
     public static LdapContext connectWithRetries(final LdapConnectionSpec ldapConnectionSpec, final String userDn, final char[] password, final int numRetries) {
         if (StringUtils.isBlank(userDn) || password == null || password.length == 0) {
             return null;
@@ -122,10 +117,6 @@ public final class LdapUtils {
 
     public static Set<String> findGroups(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
         return findGroupsWithRetries(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat, 0);
-    }
-
-    public static Set<String> findGroupsWithRetries(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
-        return findGroupsWithRetries(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat, DEFAULT_NUM_RETRIES);
     }
 
     public static Set<String> findGroupsWithRetries(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat, final int numRetries) {

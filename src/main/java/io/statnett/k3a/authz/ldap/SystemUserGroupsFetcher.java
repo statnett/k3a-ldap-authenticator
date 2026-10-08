@@ -19,22 +19,24 @@ implements UserToGroupsFetcher {
     private final char[] password;
     private final String groupMemberOfField;
     private final String usernameToUniqueSearchFormat;
+    private final int numRetries;
     private final Object contextLock = new Object();
     private LdapContext context;
     private int numReconnects;
 
-    SystemUserGroupsFetcher(final LdapConnectionSpec connectionSpec, final String userDn, final char[] password, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
+    SystemUserGroupsFetcher(final LdapConnectionSpec connectionSpec, final String userDn, final char[] password, final String groupMemberOfField, final String usernameToUniqueSearchFormat, final int numRetries) {
         this.connectionSpec = connectionSpec;
         this.userDn = userDn;
         this.password = password;
         this.groupMemberOfField = groupMemberOfField;
         this.usernameToUniqueSearchFormat = usernameToUniqueSearchFormat;
+        this.numRetries = numRetries;
     }
 
     LdapContext getContext() {
         synchronized (contextLock) {
             if (context == null) {
-                context = LdapUtils.connectWithRetries(connectionSpec, userDn, password);
+                context = LdapUtils.connectWithRetries(connectionSpec, userDn, password, numRetries);
                 ++numReconnects;
             }
             return context;
@@ -67,7 +69,7 @@ implements UserToGroupsFetcher {
                 return Collections.emptySet();
             }
             try {
-                return LdapUtils.findGroupsWithRetries(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat);
+                return LdapUtils.findGroupsWithRetries(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat, numRetries);
             } catch (final Exception e) {
                 discardContext();
                 throw new RuntimeException(e);

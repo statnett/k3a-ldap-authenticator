@@ -25,15 +25,17 @@ implements AuthenticateCallbackHandler {
     private static final String CONFIG_LDAP_USER_DN = "authz.ldap.user.dn";
     private static final String CONFIG_LDAP_USER_PASSWORD = "authz.ldap.user.password";
     private static final String CONFIG_LDAP_TIMEOUT_MS = "authz.ldap.timeout.ms";
+    private static final String CONFIG_LDAP_RETRIES = "authz.ldap.retries";
     private static final String CONFIG_LDAP_USERNAME_TO_DN_FORMAT = "authz.ldap.username.to.dn.format";
     private static final String CONFIG_LDAP_USERNAME_TO_UNIQUE_SEARCH_FORMAT = "authz.ldap.username.to.unique.search.format";
     private static final String SASL_PLAIN = "PLAIN";
+    private static final int DEFAULT_NUM_RETRIES = 0;
     private UsernamePasswordAuthenticator authenticator;
     private final UsernamePasswordAuthenticatorFactory usernamePasswordAuthenticatorFactory;
 
     public interface UsernamePasswordAuthenticatorFactory {
 
-        UsernamePasswordAuthenticator create(LdapConnectionSpec spec, String usernameToDnFormat, String usernameToUniqueSearchFormat, String userDn, String userPassword);
+        UsernamePasswordAuthenticator create(LdapConnectionSpec spec, String usernameToDnFormat, String usernameToUniqueSearchFormat, String userDn, String userPassword, int numRetries);
 
     }
 
@@ -59,7 +61,8 @@ implements AuthenticateCallbackHandler {
         final String usernameToUniqueSearchFormat = getStringProperty(configs, CONFIG_LDAP_USERNAME_TO_UNIQUE_SEARCH_FORMAT);
         final String userDn = getStringProperty(configs, CONFIG_LDAP_USER_DN);
         final String userPassword = getStringProperty(configs, CONFIG_LDAP_USER_PASSWORD);
-        authenticator = usernamePasswordAuthenticatorFactory.create(connectionSpec, usernameToDnFormat, usernameToUniqueSearchFormat, userDn, userPassword);
+        final int numRetries = getIntProperty(configs, CONFIG_LDAP_RETRIES, DEFAULT_NUM_RETRIES);
+        authenticator = usernamePasswordAuthenticatorFactory.create(connectionSpec, usernameToDnFormat, usernameToUniqueSearchFormat, userDn, userPassword, numRetries);
         LOG.info("Configured.");
     }
 
