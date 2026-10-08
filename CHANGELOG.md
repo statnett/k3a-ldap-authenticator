@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.2.0...v4.2.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* increase default number of retries from 0 to 1 ([#234](https://github.com/statnett/k3a-ldap-authenticator/issues/234)) ([e09ce51](https://github.com/statnett/k3a-ldap-authenticator/commit/e09ce51973c04232667cd0e057852933f56fd223))
+
 ## [4.2.0](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.1.0...v4.2.0) (2026-10-08)
 
 
