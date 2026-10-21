@@ -100,15 +100,15 @@ public final class LdapUtils {
                 if (!isRetryable(e)) {
                     break;
                 }
-                LOG.log(Level.FINE, "Network exception " + whenConnectingTo(ldapConnectionSpec, userDn) + ", attempt " + (t + 1) + " of " + (numRetries + 1), e);
+                LOG.log(Level.FINE, "Network exception " + whenConnectingTo(ldapConnectionSpec, userDn, e) + ", attempt " + (t + 1) + " of " + (numRetries + 1), e);
             }
         }
-        LOG.log(Level.WARNING, "Got exception " + whenConnectingTo(ldapConnectionSpec, userDn), lastNamingException);
+        LOG.log(Level.WARNING, "Got exception " + whenConnectingTo(ldapConnectionSpec, userDn, lastNamingException), lastNamingException);
         throw new UncheckedNamingException(lastNamingException);
     }
 
-    private static String whenConnectingTo(final LdapConnectionSpec spec, final String dn) {
-        return "when connecting to " + spec.getUrl() + " as \"" + dn + "\"";
+    private static String whenConnectingTo(final LdapConnectionSpec spec, final String dn, final NamingException e) {
+        return "when connecting to " + spec.getUrl() + " as \"" + dn + "\": " + e.getMessage();
     }
 
     private static boolean isRetryable(final NamingException e) {
@@ -152,10 +152,10 @@ public final class LdapUtils {
                 if (!isRetryable(e)) {
                     break;
                 }
-                LOG.log(Level.FINE, "Exception while fetching groups for \"" + username + "\", attempt " + (t + 1) + " of " + (numRetries + 1), e);
+                LOG.log(Level.FINE, "Exception while fetching groups for \"" + username + "\", attempt " + (t + 1) + " of " + (numRetries + 1) + ": " + e.getMessage(), e);
             }
         }
-        LOG.log(Level.WARNING, "Exception while fetching groups for \"" + username + "\". Will return no groups.", lastNamingException);
+        LOG.log(Level.WARNING, "Exception while fetching groups for \"" + username + "\": " + lastNamingException.getMessage() + ". Will return no groups.", lastNamingException);
         return Collections.emptySet();
     }
 
