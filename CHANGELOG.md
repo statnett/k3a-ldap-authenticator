@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.3](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.2.2...v4.2.3) (2026-10-21)
+
+
+### Bug Fixes
+
+* invalidate LDAP context for failed group search ([#244](https://github.com/statnett/k3a-ldap-authenticator/issues/244)) ([c845edc](https://github.com/statnett/k3a-ldap-authenticator/commit/c845edc274081871d6db93fd13846dd0752ba274))
+
 ## [4.2.2](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.2.1...v4.2.2) (2026-10-21)
 
 
