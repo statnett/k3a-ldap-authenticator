@@ -1,6 +1,7 @@
 package io.statnett.k3a.authz.ldap;
 
 import io.statnett.k3a.authz.ldap.utils.LdapConnectionSpec;
+import io.statnett.k3a.authz.ldap.utils.LdapContextProvider;
 import io.statnett.k3a.authz.ldap.utils.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import java.util.Collections;
 import java.util.Set;
 
 final class SystemUserGroupsFetcher
-implements UserToGroupsFetcher {
+implements UserToGroupsFetcher, LdapContextProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SystemUserGroupsFetcher.class);
     private final LdapConnectionSpec connectionSpec;
@@ -33,7 +34,8 @@ implements UserToGroupsFetcher {
         this.numRetries = numRetries;
     }
 
-    LdapContext getContext() {
+    @Override
+    public LdapContext getContext() {
         synchronized (contextLock) {
             if (context == null) {
                 context = LdapUtils.connectWithRetries(connectionSpec, userDn, password, numRetries);
@@ -43,7 +45,8 @@ implements UserToGroupsFetcher {
         }
     }
 
-    void discardContext() {
+    @Override
+    public void discardContext() {
         synchronized (contextLock) {
             if (context != null) {
                 try {
@@ -69,7 +72,7 @@ implements UserToGroupsFetcher {
                 return Collections.emptySet();
             }
             try {
-                return LdapUtils.findGroupsWithRetries(ldapContext, username, groupMemberOfField, usernameToUniqueSearchFormat, numRetries);
+                return LdapUtils.findGroupsWithRetries(this, username, groupMemberOfField, usernameToUniqueSearchFormat, numRetries);
             } catch (final Exception e) {
                 discardContext();
                 throw new RuntimeException(e);
