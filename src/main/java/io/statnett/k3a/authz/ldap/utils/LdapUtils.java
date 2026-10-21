@@ -115,11 +115,11 @@ public final class LdapUtils {
         return e instanceof CommunicationException || e instanceof ServiceUnavailableException;
     }
 
-    public static Set<String> findGroups(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
-        return findGroupsWithRetries(ldap, username, groupMemberOfField, usernameToUniqueSearchFormat, 0);
+    public static Set<String> findGroups(final LdapContextProvider contextProvider, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat) {
+        return findGroupsWithRetries(contextProvider, username, groupMemberOfField, usernameToUniqueSearchFormat, 0);
     }
 
-    public static Set<String> findGroupsWithRetries(final LdapContext ldap, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat, final int numRetries) {
+    public static Set<String> findGroupsWithRetries(final LdapContextProvider contextProvider, final String username, final String groupMemberOfField, final String usernameToUniqueSearchFormat, final int numRetries) {
         final SearchControls sc = new SearchControls();
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         sc.setReturningAttributes(new String[] { groupMemberOfField });
@@ -127,7 +127,7 @@ public final class LdapUtils {
         NamingException lastNamingException = null;
         for (int t = 0; t <= numRetries; t++) {
             try {
-                final NamingEnumeration<SearchResult> ne = ldap.search("", filter, sc);
+                final NamingEnumeration<SearchResult> ne = contextProvider.getContext().search("", filter, sc);
                 final Set<String> set = new HashSet<>();
                 if (ne.hasMore()) {
                     final SearchResult sr = ne.next();
@@ -152,6 +152,7 @@ public final class LdapUtils {
                 if (!isRetryable(e)) {
                     break;
                 }
+                contextProvider.discardContext();
                 LOG.log(Level.FINE, "Exception while fetching groups for \"" + username + "\", attempt " + (t + 1) + " of " + (numRetries + 1) + ": " + e.getMessage(), e);
             }
         }
