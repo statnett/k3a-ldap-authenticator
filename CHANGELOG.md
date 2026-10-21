@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.2](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.2.1...v4.2.2) (2026-10-21)
+
+
+### Bug Fixes
+
+* include exception message in log ([#241](https://github.com/statnett/k3a-ldap-authenticator/issues/241)) ([b9d2370](https://github.com/statnett/k3a-ldap-authenticator/commit/b9d2370b3ab0e3124293c54dd873147d6c23c177))
+
 ## [4.2.1](https://github.com/statnett/k3a-ldap-authenticator/compare/v4.2.0...v4.2.1) (2026-10-08)
 
 
